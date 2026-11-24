@@ -1,1 +1,298 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goal Verse | Football News</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #101412;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+header {
+  padding: 24px 20px;
+  background: #090c0a;
+  border-bottom: 2px solid #a5f52b;
+}
+.logo {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+.green {
+  color: #a5f52b;
+}
+.tagline {
+  color: #aaaaaa;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+nav {
+  display: flex;
+  overflow-x: auto;
+  background: #1c251f;
+  padding: 12px;
+  gap: 8px;
+}
+button {
+  background: #29352d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+button:hover, button.active {
+  background: #a5f52b;
+  color: black;
+}
+.ticker {
+  background: #a5f52b;
+  color: black;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.hero {
+  padding: 65px 25px;
+  background: linear-gradient(130deg, #101412, #285832);
+}
+.hero h1 {
+  font-size: clamp(36px, 7vw, 65px);
+  margin: 15px 0;
+}
+.hero p {
+  color: #b8c8bb;
+  line-height: 1.6;
+}
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 24px 18px;
+}
+input {
+  width: 100%;
+  padding: 14px;
+  background: #1d2820;
+  color: white;
+  border: 1px solid #465249;
+  border-radius: 7px;
+  margin-bottom: 20px;
+}
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 18px;
+}
+article {
+  background: #1b251e;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #344238;
+}
+.thumbnail {
+  height: 180px;
+  background: linear-gradient(140deg, #345d40, #121e16);
+  display: grid;
+  place-items: center;
+  font-size: 65px;
+}
+.article-content {
+  padding: 18px;
+}
+.category {
+  color: #a5f52b;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+article p {
+  color: #b5c1b8;
+  line-height: 1.6;
+}
+article h2 {
+  font-size: 21px;
+}
+footer {
+  text-align: center;
+  padding: 30px;
+  border-top: 1px solid #344238;
+  color: #999999;
+  font-size: 12px;
+}
+dialog {
+  background: #1b251e;
+  color: white;
+  border: 1px solid #a5f52b;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 650px;
+  padding: 25px;
+}
+dialog::backdrop {
+  background: #000b;
+}
+#story {
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">GOAL<span class="green">VERSE</span></div>
+  <div class="tagline">THE WORLD OF FOOTBALL</div>
+</header>
+
+<div class="ticker">
+  ● INDEPENDENT FOOTBALL NEWS
+</div>
+
+<nav id="navigation"></nav>
+
+<section class="hero">
+  <span class="category">THE BEAUTIFUL GAME</span>
+  <h1>Football.<br>Beyond the <span class="green">90.</span></h1>
+  <p>Every story. Every league. One destination.</p>
+  <button onclick="document.getElementById('latest').scrollIntoView({behavior:'smooth'})">
+    Explore News →
+  </button>
+</section>
+
+<main id="latest">
+  <h2>Latest News</h2>
+  <input id="search" placeholder="Search football news..." aria-label="Search news">
+  <div class="news-grid" id="news"></div>
+</main>
+
+<dialog id="reader">
+  <button onclick="document.getElementById('reader').close()">← Close</button>
+  <p class="category" id="storyCategory"></p>
+  <h1 id="storyTitle"></h1>
+  <p id="story"></p>
+</dialog>
+
+<footer>
+  © 2026 Goal Verse<br><br>
+  Your game. Your news. Your world.
+</footer>
+
+<script>
+const articles = [
+  {
+    title: "Welcome to Goal Verse",
+    category: "International",
+    icon: "⚽",
+    description: "Your new home for football news.",
+    content: "Welcome to Goal Verse! Our mission is to bring football fans news, match reports, transfer updates and stories from around the world."
+  },
+  {
+    title: "Understanding the Transfer Window",
+    category: "Transfers",
+    icon: "🔄",
+    description: "How football transfers work.",
+    content: "Transfer windows allow football clubs to register new players during designated periods. Clubs negotiate fees, contracts and personal terms before completing transfers."
+  },
+  {
+    title: "The Road to European Glory",
+    category: "Champions League",
+    icon: "🏆",
+    description: "Exploring European club football.",
+    content: "The UEFA Champions League brings together leading European football clubs to compete for one of the sport's most prestigious trophies."
+  }
+];
+
+const categories = [
+  "All News",
+  "Transfers",
+  "Premier League",
+  "La Liga",
+  "Champions League",
+  "Saudi Pro League",
+  "International"
+];
+
+let selected = "All News";
+
+function navigation() {
+  const nav = document.getElementById("navigation");
+  nav.replaceChildren();
+
+  categories.forEach(category => {
+    const button = document.createElement("button");
+    button.textContent = category;
+    if (category === selected) button.className = "active";
+    button.onclick = () => {
+      selected = category;
+      navigation();
+      showNews();
+    };
+    nav.appendChild(button);
+  });
+}
+
+function showNews() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const news = document.getElementById("news");
+  news.replaceChildren();
+
+  const filtered = articles.filter(article =>
+    (selected === "All News" || article.category === selected) &&
+    (article.title + " " + article.content).toLowerCase().includes(search)
+  );
+
+  if (!filtered.length) {
+    news.textContent = "No articles found.";
+  }
+
+  filtered.forEach(item => {
+    const card = document.createElement("article");
+    const image = document.createElement("div");
+    image.className = "thumbnail";
+    image.textContent = item.icon;
+
+    const body = document.createElement("div");
+    body.className = "article-content";
+
+    const category = document.createElement("span");
+    category.className = "category";
+    category.textContent = item.category;
+
+    const title = document.createElement("h2");
+    title.textContent = item.title;
+
+    const description = document.createElement("p");
+    description.textContent = item.description;
+
+    const button = document.createElement("button");
+    button.textContent = "Read More →";
+    button.onclick = () => {
+      document.getElementById("storyTitle").textContent = item.title;
+      document.getElementById("storyCategory").textContent = item.category;
+      document.getElementById("story").textContent = item.content;
+      document.getElementById("reader").showModal();
+    };
+
+    body.append(category, title, description, button);
+    card.append(image, body);
+    news.appendChild(card);
+  });
+}
+
+document.getElementById("search").addEventListener("input", showNews);
+
+navigation();
+showNews();
+</script>
+
+</body>
+</html>
+
